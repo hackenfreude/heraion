@@ -9,3 +9,7 @@ organizationName := "Hackenfreude"
 startYear := Some(2018)
 
 licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt"))
+
+libraryDependencies ++= Seq(
+  "org.scalatest" %% "scalatest" % "3.0.5" % Test
+)
