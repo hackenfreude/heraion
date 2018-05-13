@@ -16,7 +16,7 @@
 
 package com.hackenfreude.heraion
 
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.{ FunSuite, Matchers }
 
 class SchemaParserTest extends FunSuite with Matchers {
 

@@ -21,7 +21,7 @@ import io.circe.parser._
 object SchemaParser {
   def apply(input: String): Schema = {
     parse(input) match {
-      case Left(_) => throw SchemaException(s"schema definition $input cannot be parsed to valid json")
+      case Left(_)     => throw SchemaException(s"schema definition $input cannot be parsed to valid json")
       case Right(json) => println(json)
     }
     Schema()
