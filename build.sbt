@@ -14,3 +14,7 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser" % "0.9.3",
   "org.scalatest" %% "scalatest" % "3.0.5" % Test
 )
+
+lazy val heraion = project
+  .in(file("."))
+  .enablePlugins(AutomateHeaderPlugin)
