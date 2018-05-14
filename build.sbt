@@ -12,6 +12,8 @@ licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser" % "0.9.3",
+  "io.circe" %% "circe-core" % "0.9.3",
+  "io.circe" %% "circe-generic" % "0.9.3",
   "org.scalatest" %% "scalatest" % "3.0.5" % Test
 )
 
