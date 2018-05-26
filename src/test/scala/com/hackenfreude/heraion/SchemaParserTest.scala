@@ -16,9 +16,9 @@
 
 package com.hackenfreude.heraion
 
-import org.scalatest.{ FunSuite, Matchers, OptionValues }
+import org.scalatest.{ FunSuite, Matchers }
 
-class SchemaParserTest extends FunSuite with Matchers with OptionValues {
+class SchemaParserTest extends FunSuite with Matchers {
 
   test("invalid json should throw SchemaException with message") {
     val input = "foo"
@@ -28,11 +28,19 @@ class SchemaParserTest extends FunSuite with Matchers with OptionValues {
     ex.msg should be(s"schema definition $input cannot be parsed to valid json")
   }
 
+  test("valid json which cannot parse to schema should throw SchemaException with message") {
+    val input = """{"foo": "bar"}"""
+    val ex = intercept[SchemaException] {
+      val _ = SchemaParser(input)
+    }
+    ex.msg should be(s"schema definition $input cannot be parsed to a valid json schema")
+  }
+
   test("scalar type should be returned as schema type") {
     val input_type = "foo"
     val input = s"""{"type": "$input_type"}"""
     val result = SchemaParser(input)
-    result.value.`type`.types should contain theSameElementsAs List(input_type)
+    result.`type`.types should contain theSameElementsAs List(input_type)
   }
 
   test("list type should be returned as schema type") {
@@ -40,6 +48,6 @@ class SchemaParserTest extends FunSuite with Matchers with OptionValues {
     val input_type2 = "bar"
     val input = s"""{"type": ["$input_type1", "$input_type2"]}"""
     val result = SchemaParser(input)
-    result.value.`type`.types should contain theSameElementsAs List(input_type1, input_type2)
+    result.`type`.types should contain theSameElementsAs List(input_type1, input_type2)
   }
 }
