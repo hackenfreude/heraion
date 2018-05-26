@@ -23,7 +23,7 @@ import org.scalatest._
 import scala.io.Source
 import scala.util.Try
 
-abstract class JsonSchema6TestBase(testResourceFileName: String) extends FunSpec with BeforeAndAfterAll with Matchers with AppendedClues with OptionValues {
+abstract class JsonSchema6TestBase(testResourceFileName: String) extends FunSpec with BeforeAndAfterAll with Matchers with OptionValues with GivenWhenThen {
 
   private lazy val testResourceRelativePath = s"json-schema-test-suite/tests/draft6/$testResourceFileName"
 
@@ -52,24 +52,33 @@ abstract class JsonSchema6TestBase(testResourceFileName: String) extends FunSpec
     val _ = testCases
   }
 
-  describe(s"$testResourceRelativePath") {
+  describe(s"test file: $testResourceRelativePath") {
     for (testCase <- testCases) {
-      describe(s"${testCase.description}") {
+      describe(s"test case: ${testCase.description}") {
+
+        it("should be parsable schema") {
+          Given(s"the schema:\n${testCase.schema}")
+
+          When("the user parses the schema")
+          val result = SchemaParser(testCase.schema.toString())
+
+          Then("the schema should be valid")
+          result.asJson should be(testCase.schema)
+        }
+
         for (test <- testCase.tests) {
-          it(s"${test.description}") {
+          it(s"test: ${test.description}") {
 
-            val schema = testCase.schema.as[Schema].toOption
-            schema shouldBe defined withClue
-              s"""
-                 |schema: ${testCase.schema.asJson}
-                 |could not be parsed to a schema
-                 |""".stripMargin
+            Given(s"the input:\n${test.data}")
 
-            Validator(test.data, schema.value) should be(test.valid) withClue
-              s"""
-                 |test data: ${test.data}
-                 |schema: ${testCase.schema.asJson}
-                 |""".stripMargin
+            And(s"the schema:\n${testCase.schema}")
+
+            When("the user validates the input")
+            val parsedSchema = testCase.schema.as[Schema].toOption.value
+            val result = Validator(test.data, parsedSchema)
+
+            Then(s"the validation result should be ${test.valid}")
+            result should be(test.valid)
           }
         }
       }
