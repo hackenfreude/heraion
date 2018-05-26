@@ -10,11 +10,14 @@ startYear := Some(2018)
 
 licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 
+val circeVersion = "0.9.3"
+val scalatestVersion = "3.0.5"
+
 libraryDependencies ++= Seq(
-  "io.circe" %% "circe-parser" % "0.9.3",
-  "io.circe" %% "circe-core" % "0.9.3",
-  "io.circe" %% "circe-generic" % "0.9.3",
-  "org.scalatest" %% "scalatest" % "3.0.5" % Test
+  "io.circe" %% "circe-parser" % circeVersion,
+  "io.circe" %% "circe-core" % circeVersion,
+  "io.circe" %% "circe-generic" % circeVersion,
+  "org.scalatest" %% "scalatest" % scalatestVersion % Test
 )
 
 // inspired by https://tpolecat.github.io/2017/04/25/scalac-flags.html
