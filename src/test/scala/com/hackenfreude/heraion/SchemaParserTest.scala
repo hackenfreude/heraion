@@ -32,6 +32,14 @@ class SchemaParserTest extends FunSuite with Matchers with OptionValues {
     val input_type = "foo"
     val input = s"""{"type": "$input_type"}"""
     val result = SchemaParser(input)
-    result.value.`type` should be(input_type)
+    result.value.`type`.types should contain theSameElementsAs List(input_type)
+  }
+
+  test("list type should be returned as schema type") {
+    val input_type1 = "foo"
+    val input_type2 = "bar"
+    val input = s"""{"type": ["$input_type1", "$input_type2"]}"""
+    val result = SchemaParser(input)
+    result.value.`type`.types should contain theSameElementsAs List(input_type1, input_type2)
   }
 }
