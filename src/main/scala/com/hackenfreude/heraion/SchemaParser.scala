@@ -19,11 +19,10 @@ package com.hackenfreude.heraion
 import io.circe.parser._
 
 object SchemaParser {
-  def apply(input: String): Schema = {
+  def apply(input: String): Option[Schema] = {
     parse(input) match {
       case Left(_)     => throw SchemaException(s"schema definition $input cannot be parsed to valid json")
-      case Right(json) => println(json)
+      case Right(json) => json.as[Schema].toOption
     }
-    Schema()
   }
 }

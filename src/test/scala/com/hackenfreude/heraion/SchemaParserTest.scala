@@ -16,9 +16,9 @@
 
 package com.hackenfreude.heraion
 
-import org.scalatest.{ FunSuite, Matchers }
+import org.scalatest.{ FunSuite, Matchers, OptionValues }
 
-class SchemaParserTest extends FunSuite with Matchers {
+class SchemaParserTest extends FunSuite with Matchers with OptionValues {
 
   test("invalid json should throw SchemaException with message") {
     val input = "foo"
@@ -26,5 +26,12 @@ class SchemaParserTest extends FunSuite with Matchers {
       val _ = SchemaParser(input)
     }
     ex.msg should be(s"schema definition $input cannot be parsed to valid json")
+  }
+
+  test("scalar type should be returned as schema type") {
+    val input_type = "foo"
+    val input = s"""{"type": "$input_type"}"""
+    val result = SchemaParser(input)
+    result.value.`type` should be(input_type)
   }
 }
