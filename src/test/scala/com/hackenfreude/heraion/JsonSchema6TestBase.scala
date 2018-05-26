@@ -23,7 +23,7 @@ import org.scalatest._
 import scala.io.Source
 import scala.util.Try
 
-abstract class JsonSchema6TestBase(testResourceFileName: String) extends FunSpec with BeforeAndAfterAll with Matchers with AppendedClues {
+abstract class JsonSchema6TestBase(testResourceFileName: String) extends FunSpec with BeforeAndAfterAll with Matchers with AppendedClues with OptionValues {
 
   private lazy val testResourceRelativePath = s"json-schema-test-suite/tests/draft6/$testResourceFileName"
 
@@ -56,8 +56,16 @@ abstract class JsonSchema6TestBase(testResourceFileName: String) extends FunSpec
     for (testCase <- testCases) {
       describe(s"${testCase.description}") {
         for (test <- testCase.tests) {
-          it(s"${test.description}") {
-            Validator(test.data, testCase.schema) should be(test.valid) withClue
+          it(s"${test.description} foo") {
+
+            val schema = testCase.schema.as[Schema].toOption
+            schema shouldBe defined withClue
+              s"""
+                 |schema: ${testCase.schema.asJson}
+                 |could not be parsed to a schema
+               """.stripMargin
+
+            Validator(test.data, schema.value) should be(test.valid) withClue
               s"""
                  |test data: ${test.data}
                  |schema: ${testCase.schema.asJson}

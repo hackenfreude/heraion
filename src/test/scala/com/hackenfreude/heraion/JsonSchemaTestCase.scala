@@ -16,12 +16,12 @@
 
 package com.hackenfreude.heraion
 
-import io.circe.Decoder
+import io.circe.{ Decoder, Json }
 import io.circe.generic.semiauto._
 
 case class JsonSchemaTestCase(
     description: String,
-    schema:      Schema,
+    schema:      Json,
     tests:       List[JsonSchemaTest]
 )
 
