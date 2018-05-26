@@ -16,20 +16,18 @@
 
 package com.hackenfreude.heraion
 
-import io.circe.{ Decoder, Encoder }
+import enumeratum._
 
-case class Type(types: List[JsonType])
+sealed trait JsonType extends EnumEntry
 
-object Type {
+case object JsonType extends Enum[JsonType] with CirceEnum[JsonType] {
+  case object integer extends JsonType
+  case object number extends JsonType
+  case object string extends JsonType
+  case object `object` extends JsonType
+  case object array extends JsonType
+  case object boolean extends JsonType
+  case object `null` extends JsonType
 
-  implicit val typeDecoder: Decoder[Type] = Decoder[JsonType].map(str => Type(List(str)))
-    .or(Decoder[List[JsonType]].map(list => Type(list)))
-
-  implicit val schemaEncoder: Encoder[Type] = (a: Type) => {
-    if (a.types.length == 1) {
-      Encoder.encodeString.apply(a.types.head.toString)
-    } else {
-      Encoder.encodeList[String].apply(a.types.map(_.toString))
-    }
-  }
+  val values = findValues
 }

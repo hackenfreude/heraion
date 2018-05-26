@@ -37,15 +37,17 @@ class SchemaParserTest extends FunSuite with Matchers {
   }
 
   test("scalar type should be returned as schema type") {
-    val input_type = "foo"
-    val input = s"""{"type": "$input_type"}"""
-    val result = SchemaParser(input)
-    result.`type`.types should contain theSameElementsAs List(input_type)
+    for (input_type <- JsonType.values) {
+      val input = s"""{"type": "$input_type"}"""
+      val result = SchemaParser(input)
+      result.`type`.types should contain theSameElementsAs List(input_type)
+    }
   }
 
   test("list type should be returned as schema type") {
-    val input_type1 = "foo"
-    val input_type2 = "bar"
+    require(JsonType.values.length >= 2, "test assumes there is more than one JsonType")
+    val input_type1 = JsonType.values.head
+    val input_type2 = JsonType.values.tail.head
     val input = s"""{"type": ["$input_type1", "$input_type2"]}"""
     val result = SchemaParser(input)
     result.`type`.types should contain theSameElementsAs List(input_type1, input_type2)
