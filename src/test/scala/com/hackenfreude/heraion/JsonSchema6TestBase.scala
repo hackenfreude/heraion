@@ -63,13 +63,13 @@ abstract class JsonSchema6TestBase(testResourceFileName: String) extends FunSpec
               s"""
                  |schema: ${testCase.schema.asJson}
                  |could not be parsed to a schema
-               """.stripMargin
+                 |""".stripMargin
 
             Validator(test.data, schema.value) should be(test.valid) withClue
               s"""
                  |test data: ${test.data}
                  |schema: ${testCase.schema.asJson}
-                 |ignore this line number:""".stripMargin
+                 |""".stripMargin
           }
         }
       }
