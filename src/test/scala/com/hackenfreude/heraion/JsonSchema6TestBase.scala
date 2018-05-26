@@ -56,7 +56,7 @@ abstract class JsonSchema6TestBase(testResourceFileName: String) extends FunSpec
     for (testCase <- testCases) {
       describe(s"${testCase.description}") {
         for (test <- testCase.tests) {
-          it(s"${test.description} foo") {
+          it(s"${test.description}") {
 
             val schema = testCase.schema.as[Schema].toOption
             schema shouldBe defined withClue
