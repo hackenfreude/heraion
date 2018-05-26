@@ -11,12 +11,14 @@ startYear := Some(2018)
 licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 
 val circeVersion = "0.9.3"
+val enumeratumCirceVersion = "1.5.17"
 val scalatestVersion = "3.0.5"
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser" % circeVersion,
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
+  "com.beachape" %% "enumeratum-circe" % enumeratumCirceVersion,
   "org.scalatest" %% "scalatest" % scalatestVersion % Test
 )
 
