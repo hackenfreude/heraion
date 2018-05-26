@@ -16,11 +16,20 @@
 
 package com.hackenfreude.heraion
 
-import io.circe.Decoder
+import io.circe.{ Decoder, Encoder }
 
 case class Type(types: List[String])
 
 object Type {
+
   implicit val typeDecoder: Decoder[Type] = Decoder[String].map(str => Type(List(str)))
     .or(Decoder[List[String]].map(list => Type(list)))
+
+  implicit val schemaEncoder: Encoder[Type] = (a: Type) => {
+    if (a.types.length == 1) {
+      Encoder.encodeString.apply(a.types.head)
+    } else {
+      Encoder.encodeList[String].apply(a.types)
+    }
+  }
 }
