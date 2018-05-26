@@ -21,6 +21,6 @@ import io.circe.Decoder
 case class Type(types: List[String])
 
 object Type {
-  implicit val typeDecoder: Decoder[Type] = Decoder[String].map(t => Type(List(t)))
-    .or(Decoder[List[String]].map(l => Type(l)))
+  implicit val typeDecoder: Decoder[Type] = Decoder[String].map(str => Type(List(str)))
+    .or(Decoder[List[String]].map(list => Type(list)))
 }
