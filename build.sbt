@@ -19,7 +19,8 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-core" % circeVersion,
   "io.circe" %% "circe-generic" % circeVersion,
   "com.beachape" %% "enumeratum-circe" % enumeratumCirceVersion,
-  "org.scalatest" %% "scalatest" % scalatestVersion % Test
+  "org.scalatest" %% "scalatest" % scalatestVersion % Test,
+  "org.scalatest" %% "scalatest" % scalatestVersion % IntegrationTest
 )
 
 // inspired by https://tpolecat.github.io/2017/04/25/scalac-flags.html
@@ -69,3 +70,7 @@ scalacOptions ++= Seq(
 lazy val heraion = project
   .in(file("."))
   .enablePlugins(AutomateHeaderPlugin)
+  .configs(IntegrationTest)
+  .settings(
+    Defaults.itSettings
+  )
