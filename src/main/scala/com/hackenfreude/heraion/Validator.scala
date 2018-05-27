@@ -19,7 +19,7 @@ package com.hackenfreude.heraion
 import io.circe.Json
 
 object Validator {
-  def apply(input: Json, schema: Schema): Boolean = (for (t <- schema.`type`.types) yield {
+  def apply(input: Json, schema: ObjectSchema): Boolean = (for (t <- schema.`type`.types) yield {
     t match {
       case JsonType.integer if input.isNumber => input.as[Long].toOption.isDefined
       case JsonType.number                    => input.isNumber

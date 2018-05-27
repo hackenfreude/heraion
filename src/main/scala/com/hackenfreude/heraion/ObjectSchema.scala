@@ -19,9 +19,9 @@ package com.hackenfreude.heraion
 import io.circe.{ Decoder, Encoder }
 import io.circe.generic.semiauto._
 
-case class Schema(`type`: Type)
+case class ObjectSchema(`type`: Type)
 
-object Schema {
-  implicit val schemaDecoder: Decoder[Schema] = deriveDecoder[Schema]
-  implicit val schemaEncoder: Encoder[Schema] = deriveEncoder[Schema]
+object ObjectSchema {
+  implicit val objectSchemaDecoder: Decoder[ObjectSchema] = deriveDecoder[ObjectSchema]
+  implicit val objectSchemaEncoder: Encoder[ObjectSchema] = deriveEncoder[ObjectSchema]
 }

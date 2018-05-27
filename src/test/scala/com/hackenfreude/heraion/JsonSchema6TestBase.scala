@@ -74,7 +74,7 @@ abstract class JsonSchema6TestBase(testResourceFileName: String) extends FunSpec
             And(s"the schema:\n${testCase.schema}")
 
             When("the user validates the input")
-            val parsedSchema = testCase.schema.as[Schema].toOption.value
+            val parsedSchema = testCase.schema.as[ObjectSchema].toOption.value
             val result = Validator(test.data, parsedSchema)
 
             Then(s"the validation result should be ${test.valid}")
