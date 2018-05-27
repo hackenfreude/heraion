@@ -25,7 +25,7 @@ object Type {
   implicit val typeDecoder: Decoder[Type] = Decoder[JsonType].map(str => Type(List(str)))
     .or(Decoder[List[JsonType]].map(list => Type(list)))
 
-  implicit val schemaEncoder: Encoder[Type] = (a: Type) => {
+  implicit val typeEncoder: Encoder[Type] = (a: Type) => {
     if (a.types.length == 1) {
       Encoder.encodeString.apply(a.types.head.toString)
     } else {
