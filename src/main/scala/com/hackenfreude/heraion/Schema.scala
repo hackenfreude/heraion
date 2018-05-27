@@ -23,15 +23,22 @@ import io.circe.{ Decoder, Encoder, HCursor, Json }
 sealed trait Schema
 
 object Schema {
-  implicit val schemaDecoder: Decoder[Schema] = (c: HCursor) => c.value.as[ObjectSchema]
+  implicit val schemaDecoder: Decoder[Schema] = (c: HCursor) => {
+    if (c.value.isObject) {
+      c.value.as[ObjectSchema]
+    } else {
+      c.value.as[ScalarSchema]
+    }
+  }
   implicit val schemaEncoder: Encoder[Schema] = {
-    case ObjectSchema(x) => {
+    case ObjectSchema(x) =>
       if (x.types.length == 1) {
         Json.obj("type" -> x.types.head.asJson)
       } else {
         Json.obj("type" -> x.types.asJson)
       }
-    }
+    case ScalarSchema(x) =>
+      Json.fromBoolean(x)
   }
 }
 
@@ -40,4 +47,13 @@ case class ObjectSchema(`type`: Type) extends Schema
 object ObjectSchema {
   implicit val objectSchemaDecoder: Decoder[ObjectSchema] = deriveDecoder[ObjectSchema]
   implicit val objectSchemaEncoder: Encoder[ObjectSchema] = deriveEncoder[ObjectSchema]
+}
+
+case class ScalarSchema(schema: Boolean) extends Schema
+
+object ScalarSchema {
+  implicit val scalarSchemaDecoder: Decoder[ScalarSchema] = Decoder.decodeBoolean.map(bool => {
+    ScalarSchema(bool)
+  })
+  implicit val scalarSchemaEncoder: Encoder[ScalarSchema] = deriveEncoder[ScalarSchema]
 }

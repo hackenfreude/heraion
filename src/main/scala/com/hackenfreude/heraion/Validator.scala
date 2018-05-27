@@ -21,8 +21,8 @@ import io.circe.Json
 object Validator {
   def apply(input: Json, schema: Schema): Boolean = {
     schema match {
-      case ObjectSchema(objectSchema) => {
-        (for (t <- objectSchema.types) yield {
+      case objectSchema @ ObjectSchema(_) => {
+        (for (t <- objectSchema.`type`.types) yield {
           t match {
             case JsonType.integer if input.isNumber => input.as[Long].toOption.isDefined
             case JsonType.number                    => input.isNumber
@@ -35,7 +35,7 @@ object Validator {
           }
         }).contains(true)
       }
-      case _ => false
+      case scalarSchema @ ScalarSchema(_) => scalarSchema.schema
     }
   }
 }
