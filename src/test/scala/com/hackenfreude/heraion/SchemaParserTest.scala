@@ -58,4 +58,15 @@ class SchemaParserTest extends FunSuite with Matchers with Inside {
         objectSchema.types should contain theSameElementsAs List(input_type1, input_type2)
     }
   }
+
+  test("boolean scalar schemas should be returned as scalar schema type") {
+    val testCases = Seq(true, false)
+    for (testCase <- testCases) {
+      val result = SchemaParser(testCase.toString)
+      inside(result) {
+        case ScalarSchema(scalarSchema) =>
+          scalarSchema should be(testCase)
+      }
+    }
+  }
 }
