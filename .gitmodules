@@ -1,4 +1,0 @@
-[submodule "src/test/resources/json-schema-test-suite"]
-	path = src/test/resources/json-schema-test-suite
-	url = https://github.com/json-schema-org/JSON-Schema-Test-Suite.git
-	branch = master
