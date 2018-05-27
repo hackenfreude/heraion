@@ -21,6 +21,7 @@ import io.circe.syntax._
 import io.circe.{ Decoder, Encoder, HCursor, Json }
 
 sealed trait Schema
+
 object Schema {
   implicit val schemaDecoder: Decoder[Schema] = (c: HCursor) => c.value.as[ObjectSchema]
   implicit val schemaEncoder: Encoder[Schema] = {
