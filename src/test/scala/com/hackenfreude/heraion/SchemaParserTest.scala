@@ -16,9 +16,9 @@
 
 package com.hackenfreude.heraion
 
-import org.scalatest.{ FunSuite, Matchers }
+import org.scalatest.{ FunSuite, Inside, Matchers }
 
-class SchemaParserTest extends FunSuite with Matchers {
+class SchemaParserTest extends FunSuite with Matchers with Inside {
 
   test("invalid json should throw SchemaException with message") {
     val input = "foo"
@@ -40,7 +40,10 @@ class SchemaParserTest extends FunSuite with Matchers {
     for (input_type <- JsonType.values) {
       val input = s"""{"type": "$input_type"}"""
       val result = SchemaParser(input)
-      result.`type`.types should contain theSameElementsAs List(input_type)
+      inside(result) {
+        case ObjectSchema(objectSchema) =>
+          objectSchema.types should contain theSameElementsAs List(input_type)
+      }
     }
   }
 
@@ -50,6 +53,9 @@ class SchemaParserTest extends FunSuite with Matchers {
     val input_type2 = JsonType.values.tail.head
     val input = s"""{"type": ["$input_type1", "$input_type2"]}"""
     val result = SchemaParser(input)
-    result.`type`.types should contain theSameElementsAs List(input_type1, input_type2)
+    inside(result) {
+      case ObjectSchema(objectSchema) =>
+        objectSchema.types should contain theSameElementsAs List(input_type1, input_type2)
+    }
   }
 }

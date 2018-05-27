@@ -16,10 +16,25 @@
 
 package com.hackenfreude.heraion
 
-import io.circe.{ Decoder, Encoder }
 import io.circe.generic.semiauto._
+import io.circe.syntax._
+import io.circe.{ Decoder, Encoder, HCursor, Json }
 
-case class ObjectSchema(`type`: Type)
+sealed trait Schema
+object Schema {
+  implicit val schemaDecoder: Decoder[Schema] = (c: HCursor) => c.value.as[ObjectSchema]
+  implicit val schemaEncoder: Encoder[Schema] = {
+    case ObjectSchema(x) => {
+      if (x.types.length == 1) {
+        Json.obj("type" -> x.types.head.asJson)
+      } else {
+        Json.obj("type" -> x.types.asJson)
+      }
+    }
+  }
+}
+
+case class ObjectSchema(`type`: Type) extends Schema
 
 object ObjectSchema {
   implicit val objectSchemaDecoder: Decoder[ObjectSchema] = deriveDecoder[ObjectSchema]

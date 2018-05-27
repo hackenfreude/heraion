@@ -19,16 +19,23 @@ package com.hackenfreude.heraion
 import io.circe.Json
 
 object Validator {
-  def apply(input: Json, schema: ObjectSchema): Boolean = (for (t <- schema.`type`.types) yield {
-    t match {
-      case JsonType.integer if input.isNumber => input.as[Long].toOption.isDefined
-      case JsonType.number                    => input.isNumber
-      case JsonType.string                    => input.isString
-      case JsonType.`object`                  => input.isObject
-      case JsonType.array                     => input.isArray
-      case JsonType.boolean                   => input.isBoolean
-      case JsonType.`null`                    => input.isNull
-      case _                                  => false
+  def apply(input: Json, schema: Schema): Boolean = {
+    schema match {
+      case ObjectSchema(objectSchema) => {
+        (for (t <- objectSchema.types) yield {
+          t match {
+            case JsonType.integer if input.isNumber => input.as[Long].toOption.isDefined
+            case JsonType.number                    => input.isNumber
+            case JsonType.string                    => input.isString
+            case JsonType.`object`                  => input.isObject
+            case JsonType.array                     => input.isArray
+            case JsonType.boolean                   => input.isBoolean
+            case JsonType.`null`                    => input.isNull
+            case _                                  => false
+          }
+        }).contains(true)
+      }
+      case _ => false
     }
-  }).contains(true)
+  }
 }
