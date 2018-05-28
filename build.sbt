@@ -72,5 +72,7 @@ lazy val heraion = project
   .enablePlugins(AutomateHeaderPlugin)
   .configs(IntegrationTest)
   .settings(
-    Defaults.itSettings
+    Defaults.itSettings,
+    automateHeaderSettings(IntegrationTest),
+    headerSettings(IntegrationTest)
   )
