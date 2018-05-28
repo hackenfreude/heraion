@@ -74,5 +74,6 @@ lazy val heraion = project
   .settings(
     Defaults.itSettings,
     automateHeaderSettings(IntegrationTest),
-    headerSettings(IntegrationTest)
+    headerSettings(IntegrationTest),
+    scalariformItSettings
   )
