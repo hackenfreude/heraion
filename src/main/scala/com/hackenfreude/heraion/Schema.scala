@@ -36,14 +36,14 @@ object Schema {
     ).reduceLeft(_ or _)
 }
 
-case class ObjectSchema(`type`: Type) extends Schema
+final case class ObjectSchema(`type`: Type) extends Schema
 
 object ObjectSchema {
   implicit val objectSchemaDecoder: Decoder[ObjectSchema] = deriveDecoder[ObjectSchema]
   implicit val objectSchemaEncoder: Encoder[ObjectSchema] = deriveEncoder[ObjectSchema]
 }
 
-case class ScalarSchema(schema: Boolean) extends Schema
+final case class ScalarSchema(schema: Boolean) extends Schema
 
 object ScalarSchema {
   implicit val scalarSchemaDecoder: Decoder[ScalarSchema] = Decoder.decodeBoolean.map(bool => {
