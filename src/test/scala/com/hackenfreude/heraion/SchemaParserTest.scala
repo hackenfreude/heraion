@@ -16,9 +16,11 @@
 
 package com.hackenfreude.heraion
 
+import org.scalacheck.{ Arbitrary, Gen }
+import org.scalatest.prop.PropertyChecks
 import org.scalatest.{ FunSpec, Inside, Matchers }
 
-class SchemaParserTest extends FunSpec with Matchers with Inside {
+class SchemaParserTest extends FunSpec with Matchers with Inside with PropertyChecks {
 
   describe("invalid json") {
     val input = "foo"
@@ -60,20 +62,26 @@ class SchemaParserTest extends FunSpec with Matchers with Inside {
   }
 
   describe("schema json with array type field") {
-    val input_type1 = JsonType.values.head
-    val input_type2 = JsonType.values.tail.head
-    val input_types = s"""["$input_type1", "$input_type2"]"""
-    val typeField = s""""type": $input_types"""
-    val input = s"{$typeField}"
+    describe("having two type elements") {
+      it("parses") {
+        implicit val arbJsonType: Arbitrary[JsonType] = Arbitrary(Gen.oneOf(JsonType.values))
+        forAll("first", "second") { (first: JsonType, second: JsonType) =>
 
-    describe(typeField) {
-      it(s"parses type as $input_types") {
-        val result = SchemaParser(input)
-        //this first check leads to a clearer scalatest error, but perhaps there's a better way
-        result should matchPattern { case ObjectSchema(_) => }
-        inside(result) {
-          case objectSchema @ ObjectSchema(_) =>
-            objectSchema.`type`.types should contain theSameElementsAs List(input_type1, input_type2)
+          val input_type1 = first
+          val input_type2 = second
+          val input_types = s"""["$input_type1", "$input_type2"]"""
+          val typeField = s""""type": $input_types"""
+          val input = s"{$typeField}"
+
+          info(typeField)
+
+          val result = SchemaParser(input)
+          //this first check leads to a clearer scalatest error, but perhaps there's a better way
+          result should matchPattern { case ObjectSchema(_) => }
+          inside(result) {
+            case objectSchema @ ObjectSchema(_) =>
+              objectSchema.`type`.types should contain theSameElementsAs List(input_type1, input_type2)
+          }
         }
       }
     }
