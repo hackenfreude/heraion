@@ -16,56 +16,81 @@
 
 package com.hackenfreude.heraion
 
-import org.scalatest.{ FunSuite, Inside, Matchers }
+import org.scalatest.{ FunSpec, Inside, Matchers }
 
-class SchemaParserTest extends FunSuite with Matchers with Inside {
+class SchemaParserTest extends FunSpec with Matchers with Inside {
 
-  test("invalid json should throw SchemaException with message") {
+  describe("invalid json") {
     val input = "foo"
-    val ex = intercept[SchemaException] {
-      val _ = SchemaParser(input)
+    it("throws SchemaException with detailed message") {
+      val ex = intercept[SchemaException] {
+        val _ = SchemaParser(input)
+      }
+      ex.msg should be(s"schema definition $input cannot be parsed to valid json")
     }
-    ex.msg should be(s"schema definition $input cannot be parsed to valid json")
   }
 
-  test("valid json which cannot parse to schema should throw SchemaException with message") {
+  describe("valid json which cannot parse to schema") {
     val input = """{"foo": "bar"}"""
-    val ex = intercept[SchemaException] {
-      val _ = SchemaParser(input)
+    it("throws SchemaException with detailed message") {
+      val ex = intercept[SchemaException] {
+        val _ = SchemaParser(input)
+      }
+      ex.msg should be(s"schema definition $input cannot be parsed to a valid json schema")
     }
-    ex.msg should be(s"schema definition $input cannot be parsed to a valid json schema")
   }
 
-  test("scalar type should be returned as schema type") {
+  describe("schema json with scalar type field") {
     for (input_type <- JsonType.values) {
-      val input = s"""{"type": "$input_type"}"""
-      val result = SchemaParser(input)
-      inside(result) {
-        case ObjectSchema(objectSchema) =>
-          objectSchema.types should contain theSameElementsAs List(input_type)
+      val typeField = s""""type": "$input_type""""
+      val input = s"{$typeField}"
+
+      describe(typeField) {
+        it(s"parses type as $input_type") {
+          val result = SchemaParser(input)
+          //this first check leads to a clearer scalatest error, but perhaps there's a better way
+          result should matchPattern { case ObjectSchema(_) => }
+          inside(result) {
+            case ObjectSchema(objectSchema) =>
+              objectSchema.types should contain theSameElementsAs List(input_type)
+          }
+        }
       }
     }
   }
 
-  test("list type should be returned as schema type") {
-    require(JsonType.values.length >= 2, "test assumes there is more than one JsonType")
+  describe("schema json with array type field") {
     val input_type1 = JsonType.values.head
     val input_type2 = JsonType.values.tail.head
-    val input = s"""{"type": ["$input_type1", "$input_type2"]}"""
-    val result = SchemaParser(input)
-    inside(result) {
-      case ObjectSchema(objectSchema) =>
-        objectSchema.types should contain theSameElementsAs List(input_type1, input_type2)
+    val input_types = s"""["$input_type1", "$input_type2"]"""
+    val typeField = s""""type": $input_types"""
+    val input = s"{$typeField}"
+
+    describe(typeField) {
+      it(s"parses type as $input_types") {
+        val result = SchemaParser(input)
+        //this first check leads to a clearer scalatest error, but perhaps there's a better way
+        result should matchPattern { case ObjectSchema(_) => }
+        inside(result) {
+          case objectSchema @ ObjectSchema(_) =>
+            objectSchema.`type`.types should contain theSameElementsAs List(input_type1, input_type2)
+        }
+      }
     }
   }
 
-  test("boolean scalar schemas should be returned as scalar schema type") {
-    val testCases = Seq(true, false)
-    for (testCase <- testCases) {
-      val result = SchemaParser(testCase.toString)
-      inside(result) {
-        case ScalarSchema(scalarSchema) =>
-          scalarSchema should be(testCase)
+  describe("scalar schema with boolean value") {
+    for (input <- Seq(true, false)) {
+      describe(s"$input") {
+        it(s"parses as $input") {
+          val result = SchemaParser(s"$input")
+          //this first check leads to a clearer scalatest error, but perhaps there's a better way
+          result should matchPattern { case ScalarSchema(_) => }
+          inside(result) {
+            case scalarSchema @ ScalarSchema(_) =>
+              scalarSchema.schema should be(input)
+          }
+        }
       }
     }
   }
