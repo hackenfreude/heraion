@@ -16,6 +16,7 @@
 
 package com.hackenfreude.heraion
 
+import io.circe.Printer
 import io.circe.parser._
 import io.circe.syntax._
 import org.scalatest._
@@ -24,6 +25,8 @@ import scala.io.Source
 import scala.util.Try
 
 abstract class JsonSchema6TestBase(testResourceFileName: String) extends FunSpec with BeforeAndAfterAll with Matchers with OptionValues with GivenWhenThen {
+
+  private lazy val printer = Printer(preserveOrder = true, dropNullValues = true, indent = "")
 
   private lazy val testResourceRelativePath = s"json-schema-test-suite/tests/draft6/$testResourceFileName"
 
@@ -63,7 +66,7 @@ abstract class JsonSchema6TestBase(testResourceFileName: String) extends FunSpec
           val result = SchemaParser(testCase.schema.toString()).asJson
 
           Then("the schema should be valid")
-          result should be(testCase.schema)
+          result.pretty(printer) should be(testCase.schema.pretty(printer))
         }
 
         for (test <- testCase.tests) {
