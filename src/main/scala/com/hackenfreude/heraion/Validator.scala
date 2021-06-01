@@ -22,18 +22,7 @@ object Validator {
   def apply(input: Json, schema: Schema): Boolean = {
     schema match {
       case objectSchema @ ObjectSchema(_) => {
-        (for (t <- objectSchema.`type`.types) yield {
-          t match {
-            case JsonType.integer if input.isNumber => input.as[Long].toOption.isDefined
-            case JsonType.number                    => input.isNumber
-            case JsonType.string                    => input.isString
-            case JsonType.`object`                  => input.isObject
-            case JsonType.array                     => input.isArray
-            case JsonType.boolean                   => input.isBoolean
-            case JsonType.`null`                    => input.isNull
-            case _                                  => false
-          }
-        }).contains(true)
+        TypeValidator(input, objectSchema)
       }
       case scalarSchema @ ScalarSchema(_) => scalarSchema.schema
     }
